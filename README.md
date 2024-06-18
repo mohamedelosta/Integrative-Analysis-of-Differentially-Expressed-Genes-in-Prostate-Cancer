@@ -1,4 +1,4 @@
-# integrated analysis of differentialy expressed genes in prostate cancer
+# Integrated Analysis of Differentialy Expressed genes in Prostate Cancer
 
 ## Abstract:
 
