@@ -1,0 +1,119 @@
+
+############ Exploratory data analysis #############################
+
+# Load tumor samples from the colData dataframe and filter for shortLetterCode 'TP'
+tumor.samples <- as.data.frame(colData) %>% 
+  filter(shortLetterCode == 'TP') %>% 
+  group_by(sample_id)
+
+# Filter the long format data for tumor samples
+tumorLong <- filtered_data_long %>% 
+  filter(Sample %in% tumor.samples$sample )
+
+# Filter the long format data for normal samples (excluding tumor samples)
+normalLong <- filtered_data_long %>% 
+  filter(!(Sample %in% tumor.samples$sample))
+
+
+############## Density Plot of Tumor Samples ###########################
+ggplot(tumorLong, aes(x = Expression)) +
+  geom_density(alpha = 0.5) +
+  scale_x_log10() +
+  labs(title = "Density Plot of Tumor samples", x = "Expression", y = "Density") +
+  theme_minimal()
+
+############### Density Plot of Tumor Samples ##########################
+ggplot(normalLong, aes(x = Expression, color = Sample)) +
+  geom_density(alpha = 0.5) +
+  scale_x_log10() + 
+  guides(color = FALSE) +
+  labs(title = "Density Plot of Normal samples", x = "Expression", y = "Density") +
+  theme_minimal()
+
+############## BOX PLOT ########################
+
+# Determine the number of sets (batches) with 100 samples each
+num_sets <- ceiling(ncol(filtered_data_long) / 100)
+
+# Create a list to store individual boxplot plots for each set
+plot_list <- list()
+
+# Loop through each set of 100 samples, create boxplot, and store the plot
+for (i in 1:num_sets) {
+  start_index <- (i - 1) * 100 + 1
+  end_index <- min(i * 100, ncol(filtered_data_long))
+  
+  # Subset data for the current set of 100 samples
+  set_data <- filtered_data_long[, start_index:end_index]
+  
+  # Create boxplot for the current set
+  plot <- ggplot(set_data, aes(x = Sample, y = Expression)) +
+    geom_boxplot() +
+    scale_y_log10() +
+    labs(title = paste("Boxplot of Samples", start_index, "to", end_index), x = "Samples", y = "Expression") +
+    theme_minimal()
+  
+  # Store the plot in the list
+  plot_list[[i]] <- plot
+}
+
+# Arrange and display the plots in a grid layout
+plot_grid(plotlist = plot_list, ncol = 2)
+
+
+
+
+
+
+
+
+ggplot(tumorLong, aes(x = Expression)) +
+  geom_density(alpha = 0.5) +
+  scale_x_log10() +
+  labs(title = "Density Plot of Tumor samples", x = "Expression", y = "Density") +
+  theme_minimal()
+
+ggplot(normalLong, aes(x = Expression,color= Sample)) +
+    geom_density(alpha = 0.5) +
+    scale_x_log10() + 
+    guides(color = FALSE) +
+    labs(title = "Density Plot of Tumor samples", x = "Expression", y = "Density") +
+    theme_minimal()
+
+ggplot(normalLong, aes(x = Expression,color= Sample)) +
+   geom_density(alpha = 0.5) +
+   scale_x_log10() + 
+   guides(color = FALSE) +
+   labs(title = "Density Plot of Normal samples", x = "Expression", y = "Density") +
+   theme_minimal()
+
+
+
+
+
+# Determine the number of sets (batches) with 100 samples each
+num_sets <- ceiling(ncol(filtered_data_long) / 100)
+
+# Create a list to store individual boxplot plots for each set
+plot_list <- list()
+
+# Loop through each set of 100 samples, create boxplot, and store the plot
+for (i in 1:num_sets) {
+  start_index <- (i - 1) * 100 + 1
+  end_index <- min(i * 100, ncol(filtered_data_long))
+  
+# Subset data for the current set of 100 samples
+set_data <- filtered_data_long[, start_index:end_index]
+  
+# Create boxplot for the current set
+plot <- ggplot(set_data, aes(x = Sample, y = Expression)) +
+  geom_boxplot() +
+  scale_y_log10()+
+  labs(title = paste("Boxplot of Samples", start_index, "to", end_index), x = "Samples", y = "Expression") +
+  theme_minimal()
+  
+  # Store the plot in the list
+  plot_list[[i]] <- plot
+}
+plot_grid(plotlist = plot_list, ncol = 2)
+
