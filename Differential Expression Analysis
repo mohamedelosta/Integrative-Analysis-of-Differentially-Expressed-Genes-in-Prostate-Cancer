@@ -1,0 +1,122 @@
+
+
+#### Do differential analysis using Deseq2 ####
+
+cond1="Solid Tissue Normal" 
+cond2="Primary Tumor"
+
+dds= DESeqDataSetFromMatrix( countData = filtered_data, colData = colData , design = ~ sample_type)
+dds.run = DESeq(dds)
+
+### specifying the contrast
+res=results(dds.run, contrast = c("sample_type",cond1 ,cond2) )
+
+# remove nulls
+res=res[complete.cases(res), ]
+summary(res)
+
+res.df=as.data.frame(res)
+
+
+### DEGs visualization ###
+### Volcano Plot
+keyvals <- ifelse(
+  res$log2FoldChange < -1.5 & res$padj < 0.01, 'green4',
+  ifelse(res$log2FoldChange > 1.5 & res$padj < 0.01 , 'red3',
+         'black'))
+keyvals[is.na(keyvals)] <- 'black'
+names(keyvals)[keyvals == 'red3'] <- 'high'
+names(keyvals)[keyvals == 'black'] <- 'mid'
+names(keyvals)[keyvals == 'green4'] <- 'low'
+
+EnhancedVolcano(res.df,
+                lab = rownames(res.df),
+                x = 'log2FoldChange',
+                y = 'padj',
+                colCustom = keyvals,
+                pCutoff =  0.01,
+                FCcutoff = 1.5,
+                pointSize = 2.0,
+                labSize = 6.0,
+                col=c('black', 'black', 'black', 'red3'),
+                colAlpha = 1)
+
+
+### DEGs selection criteria ###
+
+res.degs=res[res$padj< 0.01 & abs(res$log2FoldChange)>log2(3),]
+res.degs=res.degs[order(res.degs$padj), ]
+
+degs.genes=rownames(res.degs)
+
+##export degs for gene enrichment analysis
+write.table(degs.genes, file="degs_prostate.txt", quote = F, col.names = F, row.names = F)
+
+#### get the normalized and logged transformed values of all exp data
+
+
+ntd=normTransform(dds)
+exp.norm= assay(ntd)
+
+
+ 
+### get the normalized expression levels of the degs ###################
+degs.exp=exp.norm[degs.genes,]
+
+##creating a heatmap for the top 500 DEG genes
+
+#  get the expression profiles of the top 500 degs only and create heatmap
+sorted_genes <- order(res.degs[,6], decreasing = FALSE)
+
+# Get the top 500 DEGs based on the sorted order
+top_100_degs <- sorted_genes[1:100]
+
+# Extract the information for the top 500 DEGs
+top_100_degs_info <- degs.exp[top_100_degs, ]
+
+phenotable.sub=colData[colData$sample_type %in% c("Primary Tumor", "Solid Tissue Normal"),]
+sample_type_colors <- c("Primary Tumor" = "red", "Solid Tissue Normal" = "green")
+column_ha <- HeatmapAnnotation(Sample.type = phenotable.sub$sample_type, col = list(Sample.type = sample_type_colors))
+Heatmap(t(scale(t(top_100_degs_info))),
+        row_names_gp = gpar(fontsize = 2.5),
+        name = "Z-score",
+        column_names_gp = gpar(fontsize = 6),
+        top_annotation = column_ha,
+        column_split = colData$sample_type)
+
+###creating  2D PCA for all degs and look how it segregates the healthy and tumor samples 
+exp.pca=prcomp(t(degs.exp),scale=F)
+sample_type_colors <- c("Primary Tumor" = "red", "Solid Tissue Normal" = "green3")
+autoplot(exp.pca, data = as.data.frame(colData), colour = 'sample_type', frame = FALSE) +
+  scale_color_manual(values = sample_type_colors)
+
+
+###creating  3D PCA  all degs and look how it segregates the healthy and tumor samples 
+exp.pca <- princomp(degs.exp,cor=T,scores = TRUE)
+mycolors= rep("green3",dim(colData)[1])
+mycolors[which(colData$sample_type=="Primary Tumor")]="red"
+
+
+# Create a 3D PCA plot
+p <- plot_ly(
+  data = pca_scores,
+  x = ~PC1,
+  y = ~PC2,
+  z = ~PC3,
+  color = ~class
+  ,
+  type = 'scatter3d',
+  mode = 'markers',
+  marker = list(size = 5),
+  text = ~paste("PC1:", round(PC1, 2), "<br>PC2:", round(PC2, 2), "<br>PC3:", round(PC3, 2))
+) %>%
+  layout(
+    title = "3D PCA Plot",
+    scene = list(
+      xaxis = list(title = 'Principal Component 1'),
+      yaxis = list(title = 'Principal Component 2'),
+      zaxis = list(title = 'Principal Component 3')
+    )
+  )
+
+snapshot3d()
