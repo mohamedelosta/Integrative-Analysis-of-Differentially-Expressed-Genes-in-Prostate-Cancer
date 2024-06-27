@@ -1,0 +1,126 @@
+
+##machine learning models to estimate the importance of degs.
+library(caret)
+
+#preparing the data set
+
+deg.train <- as.data.frame(t(degs.exp)) %>% mutate(class = colData$sample_type)
+
+#training and testing data sets
+
+# Set the seed for reproducibility
+set.seed(123)
+
+# Create indices for splitting
+indices <- createDataPartition(deg.train$class, times = 1, p = 0.7, list = FALSE)
+
+# Split the data based on indices
+train <- deg.train[indices, ]  # 70% for training
+
+# Exclude training indices to get the remaining data
+remaining_data <- deg.train[-indices, ]
+
+# Further split the remaining data into testing (20%) and validation (10%)
+indices_remaining <- createDataPartition(remaining_data$class, times = 1, p = 0.6666667, list = FALSE)
+test <- remaining_data[indices_remaining, ]  # 20% for testing
+validation <- remaining_data[-indices_remaining, ]  # 10% for validation
+
+#training models
+
+algorithms <-c('rf','svmRadial')
+
+train_control <- trainControl(method="repeatedcv", number=10, repeats=3, classProbs = TRUE)
+
+model <- caretList(class ~ ., data = train, methodList = algorithms, trControl = train_control)
+
+train$class <- make.names(train$class)
+
+
+
+#encoding trainset for xgboost
+trian_encoded <- model.matrix(~ class, data = train)
+
+#encoding testset for xgboost
+test_encoded <- model.matrix(~ class, data = test)
+
+
+xgb <-  xgboost(data = as.matrix(train[,-1225]),
+                label = trian_encoded[,2],
+                max_depth = 15,
+                nround = 25)
+
+##predictions
+
+pred.rf <- predict(model$rf, newdata = test)
+
+pred.svm <- predict(model$svmRadial, newdata = test)
+
+pred.xgb <- predict(xgb, newdata = as.matrix(test[,-1225]))
+binary_xgbpredictions <- ifelse(pred.xgb >= 0.5, 1, 0)
+
+
+### model evluation ###
+roc_svm <- roc(response = factor(test$class), predictor = as.numeric(pred.svm))
+roc_rf <- roc(response = factor(test$class), predictor = as.numeric(pred.rf))
+roc_xgb <- roc(response = factor(test_encoded[,2]), predictor = as.numeric(binary_xgbpredictions), print.auc=TRUE)
+
+
+# Plot the ROC curve for the first model
+par(pty="s")
+plot(roc_rf, col = "red", main = "ROC Curves")
+# Add ROC curves for the other two models
+lines(roc_svm, col = "blue")
+lines(roc_xgb, col = "green")
+
+# Add a legend
+legend("bottomright", legend = c("RF (AUC=0.9)" , "SVM (AUC=0.995)", "xgb (AUC=0.96)"), col = c("red", "blue", "green"), lwd = 1)
+ 
+
+
+# Get feature importance scores 
+
+importance_scores <- varImp(model$rf)$importance
+
+# Convert importance scores to a data frame 
+importance_df <- as.data.frame(importance_scores)
+importance_df$Features <- rownames(importance_df)
+
+importance_df <- importance_df[order(-importance_df$Overall), ]
+
+# Select the top 10 features
+top_10_features <- head(importance_df, 10)
+
+
+# Plotting the top 10 features
+ggplot(top_10_features, aes(x = Overall, y = Features)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Importance Score", y = "Features", title = "Top 10 Variable Importance Plot") +
+  theme_minimal()
+
+
+### deep learing using h2o package ###
+
+h2o.init()
+train_h2o <- as.h2o(train)
+validation_h2o <- as.h2o(validation)
+train$class <- as.factor(train$class)
+validation$class <- as.factor(validation$class)
+deg.train$class <- as.factor(deg.train$class)
+train$class <- make.names(train$class)
+validation$class <- make.names(validation$class)
+
+deep <- h2o.deeplearning(
+  x= colnames(train[1:1224]),
+  y= names(train[1225]),
+  training_frame = train_h2o,
+  validation_frame = validation_h2o,
+  epochs =5)
+
+plot(deep)
+test_h2o <- as.h2o(test)
+perf <- h2o.predict(deep, newdata = test_h2o)
+performance <- h2o.performance(deep , newdata =test_h2o )
+plot(performance)
+test$class <- make.names(test$class)
+
+h2o.varimp_plot(deep)
