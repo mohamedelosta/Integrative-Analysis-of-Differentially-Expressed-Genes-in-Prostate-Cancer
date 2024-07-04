@@ -71,20 +71,22 @@ The study's initial phase, known as exploratory analysis, aims to run the data t
 
 In this section, the log-transformed counts were used to produce density plots. Upon examining the density plots for both tumor and normal samples, a consistent distribution of expression values was observed across all samples in both categories. This uniformity suggests the absence of outliers or abnormalities within the sample set. This finding underscores the reliability and consistency of the data set, laying a strong foundation for further analysis and interpretation.
 
-![Tumor samples density plots](images/tumor%20density.png){fig-align="left" width="1000"}
+![tumor density](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/515ab14c-01ae-40eb-902c-20bc14807796)
 
-![Normal samples density plot](images/normal%20density.png)
+![normal density](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/219e00a4-8af5-43af-8c57-0e1e683b8541)
 
 ## Box Plots
 
 The utilization of box plots to visualize raw expression values showcased high comparability among the samples before normalization. Notably, these plots did not exhibit any peculiar or abnormal distributions within any of the samples. This uniformity across the dataset, even before normalization, signifies the robustness of the data and bolsters confidence in the subsequent analytical procedures.
+![box1-100](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/b9ffe5fe-1f87-463e-814f-dea990f192a3)
+![box101-200](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/325fb24b-8bd0-4710-ae3c-505948d15bbc)
 
 
 ## PCA
 
 Principal Component Analysis (PCA) was employed on the DESeqTransform object, which contains normalized data processed using the DESeq2 package's VTS method. PCA revealed distinct clustering between tumor and normal samples with some overlap. This overlap may be attributed to prostate cancer's inherent heterogeneity and the intricate transcriptional patterns associated with it.
 
-![PCA of normalized counts](images/PCAnormalized.png)
+![PCAnormalized](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/d3a82682-9df2-4bc5-8430-071ff31c1f1e)
 
 # Differential Expression Analysis
 
@@ -98,7 +100,7 @@ for further investigation. A volcano plot was constructed to visualize these cha
 and identify the top genes based on adjusted P and log2 fold change values for further\
 investigation.
 
-![Volcano Plot reveals the upregulated and downregulated genes](images/f.jpg)
+![f](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/58483ffa-6dcd-4ea0-a0fb-de1dd757949d)
 
 ## Heat map
 
@@ -108,7 +110,7 @@ ples within this gene subset. Notably, the heatmap illustrated the downregulatio
 the first 13 DEGs in normal samples, while the remaining 87 genes were predominantly\
 upregulated in most normal samples.
 
-![Heatmap of Top 100 DEGs](images/Picture1.png)\
+![Picture1](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/6dd83d9f-2920-47a7-a47f-a693f74197b9)
 
 ## PCA for Differentially Expressed Genes
 
@@ -119,7 +121,7 @@ data. We generated both 2D and 3D PCA plots. The PCA analysis yielded clear segr
 (PRAD). Notably, this enhanced separation in the PCA plots with selected genes suggests improved discriminative power compared to PCA using all genes, further validating\
 the efficacy of our analysis.
 
-![PCA of DEGs](images/PCA2D.png)
+![PCA2D](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/a2a1aedd-d81e-47c0-88d5-68a538ae45c4)
 
 ```{r echo=FALSE}
 # Load necessary libraries
@@ -154,7 +156,7 @@ pca3d
 
 The machine learning part of the thesis aims to prioritize the most important genes differentiating normal and tumor tissues by training accurate classification models to shed light on the most important variables in the data.
 
-![machine learning workflow](images/ml.jpg)
+![ml](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/7470e30f-92c0-4b0f-b85c-b12299bd4922)
 
 ### 1. Data Pre-processing
 
@@ -206,7 +208,6 @@ Post-training models provide insights into feature importance, highlighting the 
 
 The trained models underwent evaluation post-validation, assessing their performance through diverse metrics based on predictions made on the test set. we estimated 4 metrics
 
-![Models Estimated Metrics](images/metrics.png)
 ![metrics](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/97a8e244-daa6-4e91-a01e-37f499bbaafb)
 
 As depicted in the figure, all models exhibited notably high accuracy, underscoring\
@@ -217,7 +218,9 @@ dictive models' efficacy and unveils key genetic determinants critical for accur
 classification. The most important variables in each model have been obtained to gain\
 insights about what could be the possible biomarkers.
 
-![]()
+![RF](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/ea795b35-76d0-4984-8fb5-b7efd0da5664)
+![svm](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/1160bf73-2fde-4a53-8101-3eca3318c504)
+![xgb](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/f23da097-c4fa-4209-807a-2698caba2730)
 
 The fact that all of our models had high accuracy encouraged us to choose to combine
 all importance scores and rank top genes to obtain the best biomarker based on their
