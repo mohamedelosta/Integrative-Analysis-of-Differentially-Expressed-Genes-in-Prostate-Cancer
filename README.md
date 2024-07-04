@@ -207,6 +207,7 @@ Post-training models provide insights into feature importance, highlighting the 
 The trained models underwent evaluation post-validation, assessing their performance through diverse metrics based on predictions made on the test set. we estimated 4 metrics
 
 ![Models Estimated Metrics](images/metrics.png)
+![metrics](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/97a8e244-daa6-4e91-a01e-37f499bbaafb)
 
 As depicted in the figure, all models exhibited notably high accuracy, underscoring\
 their robust performance. After confirming their high predictive accuracy, we extracted\
