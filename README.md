@@ -7,12 +7,6 @@ The study utilized RNA-seq data from 553 samples and machine learning algorithms
 Machine learning models demonstrated high accuracy in predicting sample classification, with top-ranked genes including EPHA10, ABCG2, and GSTM3 identified as potential biomarkers for prostate cancer. Network analysis highlighted gene clusters and interactions, further validating our findings through publication enrichment and biological process enrichment.
 Our thesis proposes strategies for experimental validation, multi-omics integration, and clinical translation to advance precision medicine in prostate cancer diagnosis and treatment. The findings contribute to a deeper understanding of prostate cancer biology and hold promise for personalized therapeutic interventions and improved patient outcomes.
 
----
-title: "Differential Expression Analysis of expressed genes in Prostate Cancer"
-format: html
-editor: visual
----
-
 # THE AIM
 
 Unlike the current methods, the thesis aims to help detect new genetic biomarkers of Prostate Cancer. For this purpose, I used multiple approaches beginning with differential expression analysis to focus on the statistically significant different genes. those genes were used in advanced steps to gain biological insights by enrichment analysis and network analysis and to prioritize the most important genes some classification models were trained to know which are the most important genes that makes the cell cancerous.
@@ -35,10 +29,6 @@ gdc.query = GDCquery(
   access = 'open')
 
 results<- getResults(gdc.query)
-
-results
-
-
 ```
 
 Then we download the data and retrieve the count matrix and the metadata.
@@ -64,11 +54,11 @@ This data originated from the TCGA-Prostate Adenocarcinoma (PRAD) project and ha
 ## Filtration and Normalization
 
 \
-Before normalization, RNAs with near-zero or zero read count values across all samples\
-were excluded from the study. Additionally, a filtration step based on protein-coding\
-information was applied to focus on actively transcribed genes relevant to the functional\
-aspects of the transcriptome. This filtration ensured the analysis centered on biologically\
-relevant genes with known protein-coding potential. Following the filtration process for\
+Before normalization, RNAs with near-zero or zero read count values across all samples
+were excluded from the study. Additionally, a filtration step based on protein-coding
+information was applied to focus on actively transcribed genes relevant to the functional
+aspects of the transcriptome. This filtration ensured the analysis centered on biologically
+relevant genes with known protein-coding potential. Following the filtration process for
 protein-coding genes, a refined Gene Expression Matrix comprising 18,611 protein-coding genes was constructed. This filtered dataset served as the basis for our exploratory analysis. Subsequently, the data was normalized using the variance-stabilizing transform (VST) through the DESeq2 R-project package. VST was employed to accommodate the different variances between RNAs, as it diminishes the dependency of variance on the mean value of the read counts. This normalization strategy aimed to reduce systematic errors and enhance the reliability of our subsequent exploratory analysis.
 
 ## Exploratory Data Analysis
@@ -85,13 +75,10 @@ In this section, the log-transformed counts were used to produce density plots. 
 
 ![Normal samples density plot](images/normal%20density.png)
 
-```{r}
-
-```
-
 ## Box Plots
 
 The utilization of box plots to visualize raw expression values showcased high comparability among the samples before normalization. Notably, these plots did not exhibit any peculiar or abnormal distributions within any of the samples. This uniformity across the dataset, even before normalization, signifies the robustness of the data and bolsters confidence in the subsequent analytical procedures.
+
 
 ## PCA
 
@@ -219,7 +206,7 @@ Post-training models provide insights into feature importance, highlighting the 
 
 The trained models underwent evaluation post-validation, assessing their performance through diverse metrics based on predictions made on the test set. we estimated 4 metrics
 
-![](images/metrics.png)
+![Models Estimated Metrics](images/metrics.png)
 
 As depicted in the figure, all models exhibited notably high accuracy, underscoring\
 their robust performance. After confirming their high predictive accuracy, we extracted\
@@ -237,7 +224,4 @@ score. These models gave a lot of insights about the disease. The highest score 
 EPHA10 (erythropoietin-producing hepatocellular carcinoma receptor A10) was found
 to be over-expressed in prostate cancer. Also ABCG2. GSTM3 has different polymorphisms in various tumor cells and regulates tumorigenesis, cell invasion, metastasis, chemoresistance, and oxidative stress.
 
-## 
-
-## 
 
