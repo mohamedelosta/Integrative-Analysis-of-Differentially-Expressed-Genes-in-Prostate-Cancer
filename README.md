@@ -228,4 +228,6 @@ score. These models gave a lot of insights about the disease. The highest score 
 EPHA10 (erythropoietin-producing hepatocellular carcinoma receptor A10) was found
 to be over-expressed in prostate cancer. Also ABCG2. GSTM3 has different polymorphisms in various tumor cells and regulates tumorigenesis, cell invasion, metastasis, chemoresistance, and oxidative stress.
 
+![topall10](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/09b5fca9-86af-4f18-a254-5c9bb4739bf0)
+
 
