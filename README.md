@@ -151,6 +151,7 @@ pca3d <- plot_ly(
 pca3d
 
 ```
+![newplot](https://github.com/mohamedelosta/Integrative-Analysis-of-Differentially-Expressed-Genes-in-Prostate-Cancer/assets/143076941/f9745743-48de-4121-9a51-13e593e342f6)
 
 ## Machine Learning
 
