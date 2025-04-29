@@ -1,7 +1,9 @@
 
 ##machine learning models to estimate the importance of degs.
 library(caret)
+library(xgboost)
 library(h2o)
+
 
 #preparing the data set
 
