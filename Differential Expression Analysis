@@ -1,6 +1,12 @@
 
 
-#### Do differential analysis using Deseq2 ####
+#### Differential analysis using Deseq2 ####
+library(DESeq2)
+library(EnhancedVolcano)
+library(ggfortify)
+library(ggbio)
+library(plotly)
+
 
 cond1="Solid Tissue Normal" 
 cond2="Primary Tumor"
@@ -92,14 +98,16 @@ autoplot(exp.pca, data = as.data.frame(colData), colour = 'sample_type', frame =
 
 
 ###creating  3D PCA  all degs and look how it segregates the healthy and tumor samples 
-exp.pca <- princomp(degs.exp,cor=T,scores = TRUE)
+exp.pca <- prcomp(t(degs.exp))
+exp.pca <- as.data.frame(exp.pca$x)
+exp.pca$class <- colData$sample_type 
 mycolors= rep("green3",dim(colData)[1])
 mycolors[which(colData$sample_type=="Primary Tumor")]="red"
 
 
 # Create a 3D PCA plot
 p <- plot_ly(
-  data = pca_scores,
+  data = exp.pca,
   x = ~PC1,
   y = ~PC2,
   z = ~PC3,
@@ -108,7 +116,8 @@ p <- plot_ly(
   type = 'scatter3d',
   mode = 'markers',
   marker = list(size = 5),
-  text = ~paste("PC1:", round(PC1, 2), "<br>PC2:", round(PC2, 2), "<br>PC3:", round(PC3, 2))
+  text = ~paste("PC1:", round(PC1, 2), "<br>PC2:", round(PC2, 2), "<br>PC3:",
+                round(PC3, 2))
 ) %>%
   layout(
     title = "3D PCA Plot",
