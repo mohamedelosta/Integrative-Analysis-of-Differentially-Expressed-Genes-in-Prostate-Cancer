@@ -5,11 +5,6 @@ library("vsn")
 library(DESeq2)
 library(dplyr)
 library(TCGAbiolinks)
-library(ComplexHeatmap)
-library(rgl)
-library(caret)
-library(xgboost)
-library(h2o)
 
 
 
