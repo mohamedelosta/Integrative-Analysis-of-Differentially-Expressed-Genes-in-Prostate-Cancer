@@ -2,10 +2,12 @@
 
 #### Differential analysis using Deseq2 ####
 library(DESeq2)
+library(dplyr)
 library(EnhancedVolcano)
 library(ggfortify)
 library(ggbio)
 library(plotly)
+library(ComplexHeatmap)  
 
 
 cond1="Solid Tissue Normal" 
@@ -15,14 +17,13 @@ dds= DESeqDataSetFromMatrix( countData = filtered_data, colData = colData , desi
 dds.run = DESeq(dds)
 
 ### specifying the contrast
-res=results(dds.run, contrast = c("sample_type",cond1 ,cond2) )
+res=results(dds.run, contrast = c("sample_type",cond2 ,cond1) )
 
 # remove nulls
 res=res[complete.cases(res), ]
 summary(res)
 
 res.df=as.data.frame(res)
-
 
 ### DEGs visualization ###
 ### Volcano Plot
@@ -75,9 +76,8 @@ degs.exp=exp.norm[degs.genes,]
 sorted_genes <- order(res.degs[,6], decreasing = FALSE)
 
 # Get the top 500 DEGs based on the sorted order
-top_100_degs <- sorted_genes[1:100]
+top_100_degs <- sorted_genes[1:500]
 
-# Extract the information for the top 500 DEGs
 top_100_degs_info <- degs.exp[top_100_degs, ]
 
 phenotable.sub=colData[colData$sample_type %in% c("Primary Tumor", "Solid Tissue Normal"),]
@@ -91,14 +91,14 @@ Heatmap(t(scale(t(top_100_degs_info))),
         column_split = colData$sample_type)
 
 ###creating  2D PCA for all degs and look how it segregates the healthy and tumor samples 
-exp.pca=prcomp(t(degs.exp),scale=F)
+exp.pca=prcomp(t(degs.exp),scale=T)
 sample_type_colors <- c("Primary Tumor" = "red", "Solid Tissue Normal" = "green3")
 autoplot(exp.pca, data = as.data.frame(colData), colour = 'sample_type', frame = FALSE) +
   scale_color_manual(values = sample_type_colors)
 
 
 ###creating  3D PCA  all degs and look how it segregates the healthy and tumor samples 
-exp.pca <- prcomp(t(degs.exp))
+exp.pca <- prcomp(t(degs.exp),scale=T)
 exp.pca <- as.data.frame(exp.pca$x)
 exp.pca$class <- colData$sample_type 
 mycolors= rep("green3",dim(colData)[1])
@@ -128,4 +128,3 @@ p <- plot_ly(
     )
   )
 
-snapshot3d()
